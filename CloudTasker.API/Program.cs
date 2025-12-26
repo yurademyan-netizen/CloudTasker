@@ -34,21 +34,21 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 var app = builder.Build();
 
-// --- ВСТАВ ЦЕЙ БЛОК: Автоматичне створення БД ---
+// --- Автоматичне створення БД ---
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     try
     {
         var context = services.GetRequiredService<AppDbContext>();
-        context.Database.EnsureCreated(); // <--- ЦЕ СТВОРИТЬ ТАБЛИЦІ
+        context.Database.EnsureCreated();
     }
     catch (Exception ex)
     {
         Console.WriteLine("Помилка створення БД: " + ex.Message);
     }
 }
-// ------------------------------------------------
+// --------------------------------
 
 if (app.Environment.IsDevelopment())
 {
@@ -57,6 +57,12 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+
+// Це змушує сайт шукати index.html і показувати його
+app.UseDefaultFiles(); 
+// Це дозволяє віддавати картинки, css і сам html з папки wwwroot
+app.UseStaticFiles();
 
 app.UseCors("AllowAll");
 
