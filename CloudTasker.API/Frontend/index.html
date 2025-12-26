@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CloudTasker Dark & Orange</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- НАЛАШТУВАННЯ ТЕМИ (Темна з помаранчевим) --- */
+        :root {
+            --bg-dark: #0F172A;       /* Основний темний фон сторінки */
+            --bg-card-dark: #1E293B;  /* Фон колонок та форми */
+            --bg-item-dark: #334155;  /* Фон самої картки задачі */
+            
+            --accent-orange: #FF6B00; /* Головний помаранчевий акцент */
+            --accent-hover: #FF8533;  /* Світліший помаранчевий для наведення */
+            
+            --text-light: #F1F5F9;    /* Основний світлий текст */
+            --text-muted: #94A3B8;    /* Другорядний сірий текст */
+
+            /* Неонові кольори пріоритетів для темної теми */
+            --p-critical-text: #FF3D3D; --p-critical-bg: rgba(255, 61, 61, 0.15);
+            --p-high-text: #FFA600;     --p-high-bg: rgba(255, 166, 0, 0.15);
+            --p-medium-text: #00E676;   --p-medium-bg: rgba(0, 230, 118, 0.15);
+            --p-low-text: #2979FF;      --p-low-bg: rgba(41, 121, 255, 0.15);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #000000 100%); /* Темний градієнт */
+            color: var(--text-light); 
+            padding: 30px;
+            min-height: 100vh;
+        }
+        h1 { text-align: center; color: var(--text-light); margin-bottom: 30px; font-weight: 700; letter-spacing: -1px; }
+        
+        /* --- ФОРМА ДОДАВАННЯ (Старе розташування, новий вигляд) --- */
+        .task-form { 
+            background: var(--bg-card-dark); /* Темний фон */
+            padding: 20px; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3); /* Глибока тінь */
+            max-width: 600px; 
+            margin: 0 auto 40px auto; 
+            display: flex; gap: 15px; 
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        input, select { 
+            padding: 12px 15px; 
+            border: 1px solid #475569; 
+            background: var(--bg-dark); /* Темні поля вводу */
+            color: var(--text-light);
+            border-radius: 8px; 
+            flex-grow: 1; 
+            outline: none;
+            font-family: inherit;
+            transition: 0.2s;
+        }
+        input:focus, select:focus { border-color: var(--accent-orange); box-shadow: 0 0 0 2px rgba(255, 107, 0, 0.2); }
+        
+        button#add-btn { 
+            background: linear-gradient(to right, var(--accent-orange), #FF4500); /* Помаранчевий градієнт */
+            color: white; 
+            border: none; 
+            padding: 0 25px; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: 700; 
+            transition: 0.3s;
+            box-shadow: 0 4px 12px rgba(255, 107, 0, 0.3);
+        }
+        button#add-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(255, 107, 0, 0.5); }
+
+        /* --- ДОШКА (Старе розташування) --- */
+        .board { display: flex; gap: 25px; justify-content: center; flex-wrap: wrap; align-items: flex-start; }
+        
+        /* --- КОЛОНКА (Новий темний вигляд) --- */
+        .column { 
+            flex: 1; 
+            background: var(--bg-card-dark); 
+            padding: 15px; 
+            border-radius: 16px; 
+            min-width: 300px; 
+            max-width: 400px; 
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .column h2 { 
+            text-align: center; color: var(--text-muted); 
+            font-size: 1.1rem; margin-bottom: 20px; 
+            text-transform: uppercase; letter-spacing: 1px; font-weight: 700;
+        }
+        
+        /* --- КАРТКА ЗАДАЧІ (Стара структура, новий скін) --- */
+        .task-card { 
+            background: var(--bg-item-dark); /* Світліший темний для контрасту */
+            padding: 20px; 
+            margin-bottom: 15px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+            position: relative; /* Для хрестика */
+            transition: transform 0.2s, box-shadow 0.2s; 
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .task-card:hover { transform: translateY(-3px); box-shadow: 0 12px 20px rgba(0,0,0,0.2); border-color: rgba(255, 107, 0, 0.3); }
+        
+        /* Заголовок і опис */
+        .task-card h3 { color: var(--text-light); margin: 10px 0 5px 0; font-weight: 600; }
+        .task-card p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.4; }
+
+        /* Стилі пріоритетів (Неонові бейджі) */
+        .priority { font-size: 0.7rem; font-weight: 700; padding: 4px 10px; border-radius: 20px; display: inline-block; text-transform: uppercase; letter-spacing: 0.5px; }
+        .p-Critical { background: var(--p-critical-bg); color: var(--p-critical-text); box-shadow: 0 0 10px rgba(255, 61, 61, 0.2); }
+        .p-High { background: var(--p-high-bg); color: var(--p-high-text); }
+        .p-Medium { background: var(--p-medium-bg); color: var(--p-medium-text); }
+        .p-Low { background: var(--p-low-bg); color: var(--p-low-text); }
+
+        /* Кнопка видалення (Хрестик справа зверху) */
+        .delete-btn { 
+            position: absolute; top: 15px; right: 15px; 
+            color: var(--text-muted); cursor: pointer; border: none; background: none; 
+            font-size: 1.4rem; transition: 0.2s; line-height: 1;
+        }
+        .delete-btn:hover { color: var(--p-critical-text); transform: scale(1.1); }
+
+        /* Кнопки переміщення (Внизу картки) */
+        .move-buttons { margin-top: 15px; display: flex; gap: 8px; justify-content: flex-end; }
+        .move-btn { 
+            font-size: 0.85rem; padding: 8px 14px; cursor: pointer; 
+            border: 1px solid #475569; background: transparent; color: var(--text-light);
+            border-radius: 6px; transition: 0.2s; font-weight: 600;
+        }
+        .move-btn:hover { 
+            background: var(--accent-orange); color: white; border-color: var(--accent-orange);
+            box-shadow: 0 2px 8px rgba(255, 107, 0, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+    <h1>🚀 CloudTasker <span style="color: var(--accent-orange)">Pro</span></h1>
+
+    <div class="task-form">
+        <input type="text" id="titleInput" placeholder="Що плануємо зробити?" required>
+        <select id="priorityInput">
+            <option value="Low">Low</option>
+            <option value="Medium" selected>Medium</option>
+            <option value="High">High</option>
+            <option value="Critical">Critical</option>
+        </select>
+        <button id="add-btn" onclick="createTask()">Додати задачу</button>
+    </div>
+
+    <div class="board">
+        <div class="column">
+            <h2>To Do 📋</h2>
+            <div id="list-ToDo"></div>
+        </div>
+        <div class="column">
+            <h2>In Progress 🔨</h2>
+            <div id="list-InProgress"></div>
+        </div>
+        <div class="column">
+            <h2>Done ✅</h2>
+            <div id="list-Done"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- JAVASCRIPT ЗАЛИШАЄТЬСЯ БЕЗ ЗМІН (Логіка та сама) ---
+        const API_URL = "http://localhost:8080/api/Tasks";
+
+        async function loadTasks() {
+            try {
+                const response = await fetch(API_URL);
+                if (!response.ok) throw new Error("Err");
+                const tasks = await response.json();
+                document.getElementById('list-ToDo').innerHTML = '';
+                document.getElementById('list-InProgress').innerHTML = '';
+                document.getElementById('list-Done').innerHTML = '';
+                tasks.forEach(task => renderTask(task));
+            } catch (error) { console.error(error); }
+        }
+
+        // Функція малювання картки (Стара структура HTML!)
+        function renderTask(task) {
+            const card = document.createElement('div');
+            card.className = 'task-card';
+            
+            let moveButtons = '';
+            if (task.status === 'ToDo') 
+                moveButtons = `<button class="move-btn" onclick="updateStatus(${task.id}, 'InProgress')">В роботу ➡️</button>`;
+            else if (task.status === 'InProgress') {
+                moveButtons = `
+                    <button class="move-btn" onclick="updateStatus(${task.id}, 'ToDo')">⬅️ Назад</button>
+                    <button class="move-btn" style="border-color: var(--p-medium-text); color: var(--p-medium-text)" onclick="updateStatus(${task.id}, 'Done')">Готово ✅</button>
+                `;
+            } else if (task.status === 'Done') {
+                moveButtons = `<button class="move-btn" onclick="updateStatus(${task.id}, 'InProgress')">↩️ Повернути</button>`;
+            }
+
+            // Вставляємо в стару структуру
+            card.innerHTML = `
+                <button class="delete-btn" onclick="deleteTask(${task.id})">&times;</button>
+                <span class="priority p-${task.priority}">${task.priority}</span>
+                <h3>${task.title}</h3>
+                <p>${task.description || ''}</p>
+                <div class="move-buttons">
+                    ${moveButtons}
+                </div>
+            `;
+            const column = document.getElementById(`list-${task.status}`);
+            if (column) column.appendChild(card);
+        }
+
+        async function createTask() {
+            const titleInput = document.getElementById('titleInput');
+            const priorityInput = document.getElementById('priorityInput');
+            if (!titleInput.value) return;
+
+            await fetch(API_URL, {
+                method: "POST", headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ title: titleInput.value, priority: priorityInput.value, status: "ToDo", description: "Створено в Dark Mode" })
+            });
+            titleInput.value = ''; loadTasks();
+        }
+        async function deleteTask(id) { if(!confirm("Видалити?")) return; await fetch(`${API_URL}/${id}`, { method: "DELETE" }); loadTasks(); }
+        async function updateStatus(id, newStatus) {
+            const res = await fetch(`${API_URL}/${id}`); const task = await res.json(); task.status = newStatus;
+            await fetch(`${API_URL}/${id}`, { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(task) }); loadTasks();
+        }
+        loadTasks();
+    </script>
+</body>
+</html>
