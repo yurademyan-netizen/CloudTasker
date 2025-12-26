@@ -138,7 +138,7 @@
 </head>
 <body>
 
-    <h1>🚀 CloudTasker <span style="color: var(--accent-orange)">Pro</span></h1>
+    <h1> CloudTasker <span style="color: var(--accent-orange)">Pro</span></h1>
 
     <div class="task-form">
         <input type="text" id="titleInput" placeholder="Що плануємо зробити?" required>
@@ -167,8 +167,8 @@
     </div>
 
     <script>
-        // --- JAVASCRIPT ЗАЛИШАЄТЬСЯ БЕЗ ЗМІН (Логіка та сама) ---
-        const API_URL = "http://localhost:8080/api/Tasks";
+        // --- JAVASCRIPT ЗАЛИШАЄТЬСЯ БЕЗ ЗМІН  ---
+        const API_URL = "/api/Tasks";
 
         async function loadTasks() {
             try {
@@ -182,7 +182,7 @@
             } catch (error) { console.error(error); }
         }
 
-        // Функція малювання картки (Стара структура HTML!)
+        // Функція малювання картки (Стара структура HTML)
         function renderTask(task) {
             const card = document.createElement('div');
             card.className = 'task-card';
