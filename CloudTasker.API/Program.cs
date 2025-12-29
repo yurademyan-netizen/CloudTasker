@@ -48,7 +48,7 @@ using (var scope = app.Services.CreateScope())
         Console.WriteLine("Помилка створення БД: " + ex.Message);
     }
 }
-// --------------------------------
+
 
 if (app.Environment.IsDevelopment())
 {
