@@ -1,0 +1,245 @@
+/* --- Глобальні налаштування (Помаранчева Тема) --- */
+:root {
+    /* Фон: Вулканічний градієнт */
+    --bg-gradient: linear-gradient(135deg, #1f0b03 0%, #541804 50%, #9a3412 100%);
+    
+    --text-primary: #fff7ed;  /* Теплий білий */
+    --text-secondary: #fed7aa; /* Світло-помаранчевий */
+    --accent-color: #f97316;   /* Яскравий помаранчевий */
+    
+    /* Налаштування скла */
+    --glass-bg: rgba(255, 255, 255, 0.07);
+    --glass-border: rgba(255, 255, 255, 0.15);
+    --glass-blur: blur(24px);
+    
+    /* Тіні */
+    --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+    --shadow-hover: 0 20px 40px -5px rgba(234, 88, 12, 0.3); /* Помаранчева тінь */
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg-gradient);
+    background-attachment: fixed; /* Щоб фон не рухався при скролі */
+    color: var(--text-primary);
+    margin: 0;
+    padding: 20px;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+/* --- Клас "Матове скло" --- */
+.glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-sm);
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+/* --- ХЕДЕР --- */
+.app-header {
+    display: flex;
+    align-items: center;
+    padding: 15px 30px;
+    margin-bottom: 30px;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-left: auto; /* Притискає профіль вправо */
+}
+
+.user-photo {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--accent-color);
+    box-shadow: 0 0 15px rgba(249, 115, 22, 0.5);
+    transition: transform 0.3s ease;
+}
+
+.user-photo:hover {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.user-info { text-align: right; }
+.user-info h1 { margin: 0; font-size: 1.2rem; font-weight: 700; }
+.user-role { margin: 2px 0 0; color: var(--text-secondary); font-size: 0.85rem; }
+
+/* --- ФОРМА ДОДАВАННЯ --- */
+.main-container { max-width: 1200px; margin: 0 auto; }
+.task-creation-panel { padding: 25px; margin-bottom: 30px; }
+.task-form { display: flex; gap: 15px; }
+
+/* Поля вводу */
+.glass-input, .glass-select {
+    padding: 14px 18px;
+    border-radius: 12px;
+    border: 1px solid var(--glass-border);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 1rem;
+    flex-grow: 1;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.glass-input:focus, .glass-select:focus {
+     outline: none;
+     border-color: var(--accent-color);
+     background: rgba(255, 255, 255, 0.15);
+     box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.2);
+}
+
+.glass-select option {
+    background-color: #431407; /* Темно-коричневий фон для опцій */
+    color: white;
+    padding: 10px;
+}
+
+/* Кнопка "Додати" */
+.btn-glass-accent {
+    padding: 14px 28px;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(135deg, #f97316, #ea580c);
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(234, 88, 12, 0.4);
+}
+
+.btn-glass-accent:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px 25px rgba(234, 88, 12, 0.6);
+}
+
+/* --- СІТКА КОЛОНОК (GRID) --- */
+.task-board-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 30px;
+}
+
+.task-column {
+    padding: 20px;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+}
+
+.column-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--glass-border);
+    font-size: 0.9rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+}
+
+.task-count {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    color: var(--text-primary);
+}
+
+.task-list { flex-grow: 1; display: flex; flex-direction: column; gap: 15px; }
+
+/* --- КАРТКА ЗАДАЧІ --- */
+.task-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 20px;
+    position: relative;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    flex-direction: column;
+}
+
+.task-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: var(--shadow-hover);
+    z-index: 10;
+}
+
+.task-card h4 {
+    margin: 12px 0;
+    font-size: 1.1rem;
+    line-height: 1.4;
+    flex-grow: 1;
+}
+
+/* --- БЕЙДЖІ ПРІОРИТЕТІВ --- */
+.priority-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    align-self: flex-start;
+}
+
+.badge-low { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+.badge-medium { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
+.badge-high { background: rgba(251, 146, 60, 0.2); color: #fdba74; border: 1px solid rgba(251, 146, 60, 0.4); }
+
+.badge-critical {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    animation: pulse-red 2s infinite; /* Пульсація */
+}
+
+@keyframes pulse-red {
+    0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.2); }
+    70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+/* --- КНОПКИ НА КАРТЦІ --- */
+.card-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    opacity: 0.7;
+    transition: 0.2s;
+    padding: 5px;
+}
+
+.btn-icon:hover {
+    opacity: 1;
+    transform: scale(1.2);
+}
