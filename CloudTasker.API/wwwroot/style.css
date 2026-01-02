@@ -1,34 +1,38 @@
-/* --- Глобальні налаштування (Помаранчева Тема) --- */
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
 :root {
-    /* Фон: Вулканічний градієнт */
+    /* Палітра */
     --bg-gradient: linear-gradient(135deg, #1f0b03 0%, #541804 50%, #9a3412 100%);
-    
-    --text-primary: #fff7ed;  /* Теплий білий */
-    --text-secondary: #fed7aa; /* Світло-помаранчевий */
-    --accent-color: #f97316;   /* Яскравий помаранчевий */
-    
-    /* Налаштування скла */
+    --text-primary: #fff7ed;
+    --text-secondary: #fed7aa;
+    --accent-color: #f97316;
+
+    /* Скло (Glassmorphism) */
     --glass-bg: rgba(255, 255, 255, 0.07);
     --glass-border: rgba(255, 255, 255, 0.15);
     --glass-blur: blur(24px);
-    
+
     /* Тіні */
     --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
-    --shadow-hover: 0 20px 40px -5px rgba(234, 88, 12, 0.3); /* Помаранчева тінь */
+    --shadow-hover: 0 20px 40px -5px rgba(234, 88, 12, 0.3);
 }
+
+/* Стилі */
 
 body {
     font-family: 'Inter', sans-serif;
     background: var(--bg-gradient);
-    background-attachment: fixed; /* Щоб фон не рухався при скролі */
+    background-attachment: fixed;
     color: var(--text-primary);
     margin: 0;
     padding: 20px;
     min-height: 100vh;
-    box-sizing: border-box;
 }
 
-/* --- Клас "Матове скло" --- */
+/* Утиліта для скла */
 .glass-panel {
     background: var(--glass-bg);
     backdrop-filter: var(--glass-blur);
@@ -39,7 +43,15 @@ body {
     overflow: hidden;
 }
 
-/* --- ХЕДЕР --- */
+/* Макет контейнера */
+
+/* Головний контейнер (Вужчий, 85%) */
+.main-container {
+    max-width: 85%;
+    margin: 0 auto;
+}
+
+/* Хедер */
 .app-header {
     display: flex;
     align-items: center;
@@ -50,11 +62,13 @@ body {
     margin-right: auto;
 }
 
+/*Профіль користувача*/
+
 .user-profile {
     display: flex;
     align-items: center;
     gap: 15px;
-    margin-left: auto; /* Притискає профіль вправо */
+    margin-left: auto;
 }
 
 .user-photo {
@@ -71,17 +85,38 @@ body {
     transform: scale(1.1) rotate(5deg);
 }
 
-.user-info { text-align: right; }
-.user-info h1 { margin: 0; font-size: 1.2rem; font-weight: 700; }
-.user-role { margin: 2px 0 0; color: var(--text-secondary); font-size: 0.85rem; }
+.user-info {
+    text-align: right;
+}
 
-/* --- ФОРМА ДОДАВАННЯ --- */
-.main-container { max-width: 1200px; margin: 0 auto; }
-.task-creation-panel { padding: 25px; margin-bottom: 30px; }
-.task-form { display: flex; gap: 15px; }
+.user-info h1 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 700;
+}
 
-/* Поля вводу */
-.glass-input, .glass-select {
+.user-role {
+    margin: 2px 0 0;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+/*Створення форми завданя */
+
+.task-creation-panel {
+    padding: 25px;
+    margin-bottom: 30px;
+}
+
+.task-form {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+/* Input Fields */
+.glass-input,
+.glass-select {
     padding: 14px 18px;
     border-radius: 12px;
     border: 1px solid var(--glass-border);
@@ -92,22 +127,25 @@ body {
     flex-grow: 1;
     transition: all 0.3s ease;
     cursor: pointer;
+    min-width: 0;
+    max-width: 100%; /*  для запобігання виходу за межі */
 }
 
-.glass-input:focus, .glass-select:focus {
-     outline: none;
-     border-color: var(--accent-color);
-     background: rgba(255, 255, 255, 0.15);
-     box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.2);
+.glass-input:focus,
+.glass-select:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.2);
 }
 
 .glass-select option {
-    background-color: #431407; /* Темно-коричневий фон для опцій */
+    background-color: #431407;
     color: white;
     padding: 10px;
 }
 
-/* Кнопка "Додати" */
+/* Кнопка введення */
 .btn-glass-accent {
     padding: 14px 28px;
     border-radius: 12px;
@@ -117,6 +155,7 @@ body {
     font-weight: 600;
     font-size: 1rem;
     cursor: pointer;
+    white-space: nowrap;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 4px 15px rgba(234, 88, 12, 0.4);
 }
@@ -126,11 +165,45 @@ body {
     box-shadow: 0 8px 25px rgba(234, 88, 12, 0.6);
 }
 
-/* --- СІТКА КОЛОНОК (GRID) --- */
+/*  Мобільна форма */
+@media (max-width: 768px) {
+    .task-form {
+        flex-direction: column;
+        align-items: stretch; /* Це розтягне елементи */
+        gap: 15px;
+    }
+
+    .glass-input,
+    .glass-select,
+    .btn-glass-accent {
+        width: auto; /* Дозволяємо контейнеру контролювати ширину, щоб не обрізати краї */
+    }
+}
+
+/* Ор Дошки */
+
 .task-board-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 30px;
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    column-gap: 30px !important;
+    row-gap: 20px !important;
+    padding: 20px 0;
+    align-items: start;
+    width: 100%;
+}
+
+/*Планшетна ор  */
+@media (max-width: 1200px) {
+    .task-board-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+/* Мобільна ор */
+@media (max-width: 768px) {
+    .task-board-grid {
+        grid-template-columns: 1fr !important;
+    }
 }
 
 .task-column {
@@ -138,6 +211,8 @@ body {
     min-height: 400px;
     display: flex;
     flex-direction: column;
+    width: auto !important;
+    min-width: 0 !important;
 }
 
 .column-header {
@@ -162,9 +237,15 @@ body {
     color: var(--text-primary);
 }
 
-.task-list { flex-grow: 1; display: flex; flex-direction: column; gap: 15px; }
+.task-list {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
 
-/* --- КАРТКА ЗАДАЧІ --- */
+/* Карта із завданнями */
+
 .task-card {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
@@ -191,7 +272,18 @@ body {
     flex-grow: 1;
 }
 
-/* --- БЕЙДЖІ ПРІОРИТЕТІВ --- */
+.card-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Значки кнопок  */
+
+/* Priority Badges */
 .priority-badge {
     display: inline-block;
     padding: 6px 12px;
@@ -202,44 +294,65 @@ body {
     align-self: flex-start;
 }
 
-.badge-low { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
-.badge-medium { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
-.badge-high { background: rgba(251, 146, 60, 0.2); color: #fdba74; border: 1px solid rgba(251, 146, 60, 0.4); }
+.badge-low {
+    background: rgba(59, 130, 246, 0.15);
+    color: #60a5fa;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.badge-medium {
+    background: rgba(34, 197, 94, 0.15);
+    color: #4ade80;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.badge-high {
+    background: rgba(251, 146, 60, 0.2);
+    color: #fdba74;
+    border: 1px solid rgba(251, 146, 60, 0.4);
+}
 
 .badge-critical {
     background: rgba(239, 68, 68, 0.15);
     color: #f87171;
     border: 1px solid rgba(239, 68, 68, 0.3);
-    animation: pulse-red 2s infinite; /* Пульсація */
+    animation: pulse-red 2s infinite;
 }
+
+/* Кнопки */
+.btn-icon {
+    background: none;
+    cursor: pointer;
+    font-size: 1.1rem;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+    color: var(--text-secondary);
+    opacity: 0.8;
+    transition: all 0.3s ease;
+}
+
+.btn-icon:hover {
+    opacity: 1;
+    transform: translateY(-2px);
+    border-color: var(--accent-color);
+    color: var(--accent-color);
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 4px 10px rgba(249, 115, 22, 0.3);
+}
+
+.btn-icon:hover i {
+    animation: fa-beat 1s infinite;
+}
+
+/* Анімації */
 
 @keyframes pulse-red {
     0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.2); }
     70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
     100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-}
-
-/* --- КНОПКИ НА КАРТЦІ --- */
-.card-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 15px;
-    padding-top: 15px;
-    border-top: 1px solid rgba(255,255,255,0.1);
-}
-
-.btn-icon {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 1.2rem;
-    opacity: 0.7;
-    transition: 0.2s;
-    padding: 5px;
-}
-
-.btn-icon:hover {
-    opacity: 1;
-    transform: scale(1.2);
 }

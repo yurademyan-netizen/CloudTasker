@@ -15,6 +15,7 @@ namespace CloudTasker.API.Models
     {
         ToDo,
         InProgress,
+        CodeReview,
         Done
     }
 
