@@ -84,11 +84,11 @@ function createTaskCard(task) {
     let actionButtons = '';
     
     if (task.status !== 'Done') {
-        actionButtons += `<button onclick="moveTask(${task.id}, '${getNextStatus(task.status)}')" class="btn-icon" title="Вперед"> <wa-icon name="angles-right" style="animation: fa-beat 1s infinite ease-in-out;"></wa-icon> </button>`;
+        actionButtons += `<button onclick="moveTask(${task.id}, '${getNextStatus(task.status)}')" class="btn-icon" title="Вперед"> <i class="fa-solid fa-angles-right fa-beat"></i>  </button>`;
     }
     
     // Кнопка видалення
-    actionButtons += `<button onclick="deleteTask(${task.id})" class="btn-icon" title="Видалити" style="color: #f87171;"> <i class="fa-regular fa-trash-can fa-beat"></i> </button>`;
+    actionButtons += `<button onclick="deleteTask(${task.id})" class="btn-icon" title="Видалити" style="color: #f87171;"> <i class="fa-regular fa-trash-can fa-beat"> </i> </button>`;
 
     // Вставляємо HTML
     div.innerHTML = `
