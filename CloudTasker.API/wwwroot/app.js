@@ -1,7 +1,7 @@
 // Адреса API
 const API_URL = '/api/Tasks';
 
-// Словник статусів
+// Словник статусів (C# Enum: 0=Todo, 1=InProgress, 2=CodeReview, 3=Done)
 const TaskStatus = {
     Todo: 0,
     InProgress: 1,
@@ -9,38 +9,20 @@ const TaskStatus = {
     Done: 3
 };
 
-// Запуск
+// Запуск при завантаженні сторінки
 document.addEventListener('DOMContentLoaded', loadTasks);
 
-// 1. ДОДАВАННЯ
-document.getElementById('taskForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const title = document.getElementById('taskTitleInput').value;
-    const priority = document.getElementById('taskPrioritySelect').value;
-
-    if (!title.trim()) return;
-
-    try {
-        await fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ 
-                title: title, 
-                priority: priority, 
-                status: TaskStatus.Todo
-            })
-        });
-        document.getElementById('taskTitleInput').value = '';
-        loadTasks();
-    } catch (error) { console.error(error); }
-});
-
-// 2. ЗАВАНТАЖЕННЯ
+// --- 1. ЗАВАНТАЖЕННЯ ЗАДАЧ ---
 async function loadTasks() {
     try {
         const response = await fetch(API_URL);
+        if (!response.ok) {
+            console.error("Failed to fetch tasks");
+            return;
+        }
         const tasks = await response.json();
 
+        // Очищаємо колонки
         const columns = {
             [TaskStatus.Todo]: document.getElementById('todo-list'),
             [TaskStatus.InProgress]: document.getElementById('inprogress-list'),
@@ -49,50 +31,55 @@ async function loadTasks() {
         };
         
         Object.values(columns).forEach(col => { if(col) col.innerHTML = ''; });
+
         let counts = { 0: 0, 1: 0, 2: 0, 3: 0 };
 
         tasks.forEach(task => {
+            // Нормалізація: перетворюємо "InProgress" -> 1, якщо сервер повернув текст
             const statusId = normalizeStatus(task.status);
+            
             if (columns[statusId]) {
-                columns[statusId].appendChild(createTaskCard(task, statusId));
+                const card = createTaskCard(task, statusId);
+                columns[statusId].appendChild(card);
                 counts[statusId]++;
             }
         });
 
-        updateCount('todo-count', counts[TaskStatus.Todo]);
-        updateCount('inprogress-count', counts[TaskStatus.InProgress]);
-        updateCount('codereview-count', counts[TaskStatus.CodeReview]);
-        updateCount('done-count', counts[TaskStatus.Done]);
+        // Оновлюємо лічильники
+        updateCount('todo-count', counts[0]);
+        updateCount('inprogress-count', counts[1]);
+        updateCount('codereview-count', counts[2]);
+        updateCount('done-count', counts[3]);
 
-    } catch (error) { console.error(error); }
+    } catch (error) {
+        console.error('Load error:', error);
+    }
 }
 
-// 3. КАРТКА (Оновлена логіка кнопок)
+// --- 2. СТВОРЕННЯ КАРТКИ ---
 function createTaskCard(task, currentStatusId) {
     const div = document.createElement('div');
     div.className = 'task-card';
     
     let buttonsHtml = '';
 
-    // ⬅КНОПКА "НАЗАД" (Якщо статус не ToDo)
+    // Кнопка НАЗАД ( < )
     if (currentStatusId > TaskStatus.Todo) {
-        const prevStatusId = currentStatusId - 1;
         buttonsHtml += `
-            <button onclick="moveTask(${task.id}, ${prevStatusId})" class="btn-icon" title="Move Back">
-                <i class="fa-solid fa-angles-left fa-beat"></i>
+            <button onclick="moveTask(${task.id}, ${currentStatusId - 1})" class="btn-icon" title="Back">
+                <i class="fa-solid fa-angles-left"></i>
             </button>`;
     }
 
-    //  КНОПКА "ВПЕРЕД" (Якщо статус не Done)
+    // Кнопка ВПЕРЕД ( > )
     if (currentStatusId < TaskStatus.Done) {
-        const nextStatusId = currentStatusId + 1;
         buttonsHtml += `
-            <button onclick="moveTask(${task.id}, ${nextStatusId})" class="btn-icon" title="Move Next">
-                <i class="fa-solid fa-angles-right fa-beat-fade"></i>
+            <button onclick="moveTask(${task.id}, ${currentStatusId + 1})" class="btn-icon" title="Next">
+                <i class="fa-solid fa-angles-right"></i>
             </button>`;
     }
     
-    //  КНОПКА "ВИДАЛИТИ"
+    // Кнопка ВИДАЛИТИ
     buttonsHtml += `
         <button onclick="deleteTask(${task.id})" class="btn-icon" title="Delete">
             <i class="fa-solid fa-trash-can"></i>
@@ -108,37 +95,73 @@ function createTaskCard(task, currentStatusId) {
     return div;
 }
 
-// 4. РУХ
+// --- 3. РУХ ЗАДАЧІ (Виправлення помилки 400) ---
 async function moveTask(id, newStatusId) {
     try {
+        console.log(`Moving task ${id} to status ${newStatusId}`);
+
+        // 1. Отримуємо поточну задачу
         const getRes = await fetch(`${API_URL}/${id}`);
         const task = await getRes.json();
         
-        task.status = Number(newStatusId); // Строго число
+        // 2. ЖОРСТКО ставимо статус як ЧИСЛО
+        task.status = Number(newStatusId); 
 
-        await fetch(`${API_URL}/${id}`, {
+        // 3. Відправляємо на сервер
+        const putRes = await fetch(`${API_URL}/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(task)
         });
-        loadTasks(); 
-    } catch (err) { console.error(err); }
+
+        if (putRes.ok) {
+            loadTasks(); // Оновлюємо борд
+        } else {
+            console.error('Server Error:', await putRes.text());
+            alert('Помилка сервера. Дивись консоль.');
+        }
+    } catch (err) {
+        console.error('Network Error:', err);
+    }
 }
 
-// 5. ВИДАЛЕННЯ
+// --- 4. ДОДАВАННЯ ЗАДАЧІ ---
+document.getElementById('taskForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const title = document.getElementById('taskTitleInput').value;
+    const priority = document.getElementById('taskPrioritySelect').value;
+
+    if (!title.trim()) return;
+
+    await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            title: title, 
+            priority: priority, 
+            status: 0 // Завжди як число 0
+        })
+    });
+    
+    document.getElementById('taskTitleInput').value = '';
+    loadTasks();
+});
+
+// --- 5. ВИДАЛЕННЯ ---
 async function deleteTask(id) {
-    if(confirm('Delete task?')) {
+    if(confirm('Видалити задачу?')) {
         await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
         loadTasks();
     }
 }
 
-// ХЕЛПЕРИ
+// --- ХЕЛПЕРИ ---
 function normalizeStatus(status) {
     if (typeof status === 'number') return status;
     const map = { 'Todo': 0, 'InProgress': 1, 'CodeReview': 2, 'Done': 3 };
     return map[status] !== undefined ? map[status] : 0;
 }
+
 function updateCount(id, value) {
     const el = document.getElementById(id);
     if(el) el.textContent = value;
