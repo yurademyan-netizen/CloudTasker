@@ -29,3 +29,6 @@ The project utilizes a fully automated DevOps pipeline via GitHub Actions.
 * Triggers automatically after successful CI validation.
 * Publishes the application artifacts.
 * Deploys directly to **Azure Web App** using GitHub Secrets for secure authentication.
+
+
+[Link ](https://www.loom.com/share/345de5f0fa0a47d19e953101a14a6a96)
